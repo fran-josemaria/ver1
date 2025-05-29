@@ -1,0 +1,125 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>소나무 그룹별 JSON 저장형 도면</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; background-color: #f4f4f4; }
+        .map-container { position: relative; display: inline-block; }
+        .pin {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background-color: #007BFF;
+            border-radius: 50%;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+            line-height: 30px;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+        }
+        #log {
+            width: 80%;
+            margin: 20px auto;
+            background: #fff;
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+            font-family: monospace;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .controls {
+            margin: 15px;
+        }
+        select, input[type="file"], button {
+            padding: 6px;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h2>📌 전정 / 적심 그룹 선택 → 핀 생성 | JSON 저장/불러오기 지원</h2>
+    <div class="controls">
+        <label>그룹 선택:
+            <select id="groupSelect">
+                <option value="전">전정</option>
+                <option value="적">적심</option>
+            </select>
+        </label>
+        <button onclick="downloadPins()">📥 저장 (JSON)</button>
+        <input type="file" id="jsonUpload" accept=".json" onchange="uploadPins(event)">
+    </div>
+    <div class="map-container">
+        <img id="map" src="layout_sample.jpg" width="1000px">
+    </div>
+    <div id="log">📍 핀 코드 목록:</div>
+
+    <script>
+        let counters = { "전": 1, "적": 1 };
+        const mapContainer = document.querySelector(".map-container");
+
+        function createPin(x, y, label) {
+            const pin = document.createElement("div");
+            pin.className = "pin";
+            pin.style.left = x + "px";
+            pin.style.top = y + "px";
+            pin.textContent = label;
+            mapContainer.appendChild(pin);
+        }
+
+        function logPin(x, y, label) {
+            const log = document.getElementById("log");
+            log.innerHTML += `<div>&lt;div class="pin" style="top: ${y}px; left: ${x}px;"&gt;${label}&lt;/div&gt;</div>`;
+        }
+
+        function downloadPins() {
+            const pins = [];
+            document.querySelectorAll(".pin").forEach(pin => {
+                const label = pin.textContent;
+                const top = parseFloat(pin.style.top);
+                const left = parseFloat(pin.style.left);
+                pins.push({ x: left, y: top, label: label });
+            });
+            const blob = new Blob([JSON.stringify(pins, null, 2)], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "pins.json";
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function uploadPins(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const content = e.target.result;
+                const pins = JSON.parse(content);
+                pins.forEach(pin => {
+                    createPin(pin.x, pin.y, pin.label);
+                    logPin(pin.x, pin.y, pin.label);
+                    const group = pin.label.startsWith("전") ? "전" : "적";
+                    const num = parseInt(pin.label.split("-")[1]);
+                    if (counters[group] <= num) counters[group] = num + 1;
+                });
+            };
+            reader.readAsText(file);
+        }
+
+        document.getElementById("map").addEventListener("click", function(event) {
+            const rect = this.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            const group = document.getElementById("groupSelect").value;
+            const label = group + "-" + counters[group]++;
+            createPin(x, y, label);
+            logPin(x, y, label);
+        });
+    </script>
+</body>
+</html>

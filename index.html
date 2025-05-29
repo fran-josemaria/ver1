@@ -1,0 +1,126 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>곤지암 화담숲 소나무 전정 기록</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; background-color: #f4f4f4; }
+        .map-container { position: relative; display: inline-block; }
+        .pin {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background-color: red;
+            border-radius: 50%;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 30px;
+        }
+        .popup {
+            display: none;
+            position: absolute;
+            background: white;
+            border: 1px solid #ccc;
+            padding: 10px;
+            z-index: 10;
+        }
+    </style>
+    
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        function togglePopup(id) {
+            // 모든 팝업 닫기
+            var popups = document.querySelectorAll('.popup');
+            popups.forEach(function(p) {
+                p.style.display = 'none';
+            });
+
+            // 해당 팝업만 열기
+            var popup = document.getElementById(id);
+            if (popup) {
+                popup.style.display = 'block';
+            }
+        }
+
+        // 핀 클릭 시에도 이벤트 전파 막기
+        var pins = document.querySelectorAll('.pin');
+        pins.forEach(function(pin) {
+            pin.addEventListener('click', function(event) {
+                event.stopPropagation();
+                var targetId = pin.getAttribute('onclick').match(/'([^']+)'/)[1];
+                togglePopup(targetId);
+            });
+        });
+
+        // 팝업 클릭 시 전파 방지
+        var popups = document.querySelectorAll('.popup');
+        popups.forEach(function(popup) {
+            popup.addEventListener('click', function(event) {
+                event.stopPropagation();
+            });
+        });
+
+        // 배경 클릭 시 모든 팝업 닫기
+        window.addEventListener('click', function() {
+            var popups = document.querySelectorAll('.popup');
+            popups.forEach(function(p) {
+                p.style.display = 'none';
+            });
+        });
+    });
+</script>
+
+
+</head>
+<body>
+    <h1>곤지암 화담숲 소나무 전정 기록</h1>
+    <div class="map-container">
+        <img src="layout_sample.jpg" alt="도면" width="1000px">
+        <div class="pin" style="top: 117.1875px; left: 798px;">적-5</div>
+        <div class="popup" id="popupR1" style="top: 240px; left: 400px;">
+            <img src="images/R1.jpg" width="300px"><br>화담숲 입구 소나무
+        </div>
+        <div class="pin" style="top: 500px; left: 600px;" onclick="togglePopup('popupR2')">R2</div>
+        <div class="popup" id="popupR2" style="top: 540px; left: 600px;">
+            <img src="images/R2.jpg" width="300px"><br>연못가 소나무
+        </div>
+    
+    <div class="pin" style="top: 300px; left: 200px;" onclick="togglePopup('popupR3')">R3</div>
+    <div class="popup" id="popupR3" style="top: 340px; left: 200px;">
+        <img src="images/R3.jpg" width="300px"><br>예시: 전정 전 상태
+    </div>
+    <div class="pin" style="top: 350px; left: 250px;" onclick="togglePopup('popupR4')">R4</div>
+    <div class="popup" id="popupR4" style="top: 390px; left: 250px;">
+        <img src="images/R4.jpg" width="300px"><br>예시: 전정 전 상태
+    </div>
+    <div class="pin" style="top: 400px; left: 300px;" onclick="togglePopup('popupR5')">R5</div>
+    <div class="popup" id="popupR5" style="top: 440px; left: 300px;">
+        <img src="images/R5.jpg" width="300px"><br>예시: 전정 전 상태
+    </div>
+    <div class="pin" style="top: 450px; left: 350px;" onclick="togglePopup('popupR6')">R6</div>
+    <div class="popup" id="popupR6" style="top: 490px; left: 350px;">
+        <img src="images/R6.jpg" width="300px"><br>예시: 전정 전 상태
+    </div>
+    <div class="pin" style="top: 500px; left: 400px;" onclick="togglePopup('popupR7')">R7</div>
+    <div class="popup" id="popupR7" style="top: 540px; left: 400px;">
+        <img src="images/R7.jpg" width="300px"><br>예시: 전정 전 상태
+    </div>
+    <div class="pin" style="top: 550px; left: 450px;" onclick="togglePopup('popupR8')">R8</div>
+    <div class="popup" id="popupR8" style="top: 590px; left: 450px;">
+        <img src="images/R8.jpg" width="300px"><br>예시: 전정 전 상태
+    </div>
+    <div class="pin" style="top: 600px; left: 500px;" onclick="togglePopup('popupR9')">R9</div>
+    <div class="popup" id="popupR9" style="top: 640px; left: 500px;">
+        <img src="images/R9.jpg" width="300px"><br>예시: 전정 전 상태
+    </div>
+    <div class="pin" style="top: 650px; left: 550px;" onclick="togglePopup('popupR10')">R10</div>
+    <div class="popup" id="popupR10" style="top: 690px; left: 550px;">
+        <img src="images/R10.jpg" width="300px"><br>예시: 전정 전 상태
+    </div>
+</div>
+</body>
+</html>
